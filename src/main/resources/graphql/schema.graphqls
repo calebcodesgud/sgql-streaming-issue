@@ -1,0 +1,16 @@
+schema {
+    query: Query
+    subscription: Subscription
+}
+
+type Query {
+    getFluxOfObjects: Result
+}
+
+type Subscription {
+    getFluxOfObjects: Result
+}
+
+type Result {
+    numer: Int
+}
