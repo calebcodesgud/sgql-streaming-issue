@@ -4,7 +4,7 @@ schema {
 }
 
 type Query {
-    getFluxOfObjects: Result
+    getFluxOfObjects: [Result]
 }
 
 type Subscription {
