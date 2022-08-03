@@ -4,11 +4,11 @@ schema {
 }
 
 type Query {
-    getFluxOfObjects: [Result]
+    greeting: String
 }
 
 type Subscription {
-    getFluxOfObjects: Result
+    getFluxOfObjects(count: Int=10): Result
 }
 
 type Result {

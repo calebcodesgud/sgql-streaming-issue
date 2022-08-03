@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.web.reactive.config.EnableWebFlux;
 
 @SpringBootApplication
-@EnableWebFlux
 public class GraphqlTesterApplication {
 
 	public static void main(String[] args) {
