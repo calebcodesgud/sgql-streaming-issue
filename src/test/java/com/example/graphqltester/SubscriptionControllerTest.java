@@ -1,36 +1,31 @@
 package com.example.graphqltester;
 
-import graphql.kickstart.spring.webclient.boot.GraphQLRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
-import org.springframework.graphql.client.WebSocketGraphQlClient;
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
+import org.springframework.graphql.test.tester.GraphQlTester;
 
 @Slf4j
+@GraphQlTest(SubscriptionController.class)
 class SubscriptionControllerTest {
 
-    @Test
-    void getFluxOfObjects() {
-        // run this test with the application running from local
-        final WebClient webclient = WebClient.builder().baseUrl("http://localhost:8080/graphql").build();
-        webclient.post().contentType(MediaType.APPLICATION_JSON).body(Mono.just(
-                new GraphqlRequest("subscription getFluxOfObjects { getFluxOfObjects { numer } }")
-        ), GraphQLRequest.class)
-                .retrieve().bodyToFlux(String.class).doOnNext(each -> log.info("{}", each)).blockLast();
-    }
+	@Autowired
+	private GraphQlTester graphQlTester;
 
-    @Test
-    void getFluxOfObjectsWebSocket() {
-        // run this test with the application running from local
-        final WebSocketGraphQlClient client = WebSocketGraphQlClient.builder("ws://localhost:8080/graphql", new ReactorNettyWebSocketClient()).build();
-        client.start().block();
-        client.documentName("test").executeSubscription().doOnNext(each -> log.info("{}", each)).blockLast();
-        client.stop().block();
-    }
+
+	@Test
+	void getFluxOfObjects() {
+		Flux<Integer> ints = this.graphQlTester.documentName("fluxOfObjects")
+				.executeSubscription()
+				.toFlux("getFluxOfObjects.numer", Integer.class);
+
+		StepVerifier.create(ints)
+				.expectNextCount(10)
+				.verifyComplete();
+	}
+
 }
